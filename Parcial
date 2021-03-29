@@ -1,1 +1,211 @@
-#Parcial 
+
+#PARCIAL1
+
+import pygame
+
+from libreria import *
+
+if __name__ == "__main__":
+    pygame.init()
+    pantalla = pygame.display.set_mode([ANCHO,ALTO])
+    finVentana = False
+    reloj = pygame.time.Clock()
+
+    vector0 = [-1,1,-1]
+    vector1 = [-0.25,1, -1]
+    vector2 = [-0.25,0.5,-1]
+    vector3 = [1.25,0.5,-1]
+    vector4 = [1.25,1,-1]
+    vector5 = [2,1,-1]
+    vector6 = [2,-1,-1]
+    vector7 = [-1,-1,-1]
+
+    #caras2 caras2 = [ListaC[0],ListaC[1],ListaC[8],ListaC[9]]
+    vector8 = [-0.25,1,1]
+    vector9 = [-1,1,1]
+
+    #caras3 = [ListaC[4],ListaC[5],ListaC[10],ListaC[11]]
+    vector10 = [2,1,1]
+    vector11 = [1.25,1,1]
+
+    #caras4 = [ListaC[1],ListaC[2],ListaC[12],ListaC[13]]
+    vector12 = [-0.25,0.5,1]
+    vector13 = [-0.25,1,1]
+
+    #caras5 = [ListaC[2],ListaC[12],ListaC[14],ListaC[3]]
+    vector14 = [1.25,0.5,1]
+
+    #caras6 = [ListaC[5],ListaC[10],ListaC[15],ListaC[6]]
+    vector15 = [2,-1,1]
+
+    #caras7 = [ListaC[3],ListaC[14],ListaC[11],ListaC[4]]'''
+
+    vectors = [vector0, vector1,vector2,vector3,vector4,vector5,vector6,vector7,vector8,vector9,vector10,vector11,
+    vector12,vector13,vector14,vector15]
+
+    ListaC = []
+
+
+    rotacionX = -30
+    rotacionY = 30
+
+    valorEscalamiento = 1
+
+    while finVentana != True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                 finVentana = True
+
+            if event.type == pygame.KEYDOWN:
+                #Rotacion de la figura
+                if event.key == pygame.K_UP:
+                    if(rotacionX >= -60):
+                        rotacionX -= 30
+                if event.key == pygame.K_DOWN:
+                    if(rotacionX <= -30):
+                        rotacionX += 30
+                if event.key == pygame.K_RIGHT:
+                    if(rotacionY <= 60):
+                        rotacionY += 30
+                if event.key == pygame.K_LEFT:
+                    if(rotacionY >= 30):
+                        rotacionY -= 30
+
+                #E==================================================
+                #escalamiento reducido con la tecla backspace
+                if event.key == pygame.K_BACKSPACE:
+                    if (0.3<=valorEscalamiento<=2.2):
+                        valorEscalamiento -=0.3
+                        if valorEscalamiento <0.3:
+                            valorEscalamiento = 0.3
+
+                #escalamineto aumentado con tabulador
+                if event.key == pygame.K_TAB:
+                    if (0.3<=valorEscalamiento<2):
+                        valorEscalamiento += 0.3
+                        if valorEscalamiento > 2:
+                            valorEscalamiento = 2
+
+            #=========================================================
+            #Escalamiento con el scroll del mouse
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 4:
+                    valorEscalamiento +=0.3
+                    if valorEscalamiento >2:
+                        valorEscalamiento=2
+
+                elif event.button == 5:
+                    valorEscalamiento -=0.3
+                    if (valorEscalamiento<0.3):
+                        valorEscalamiento=0.3
+
+
+
+
+
+
+        reloj.tick(60)
+        pantalla.fill((0,0,0))
+
+        #==================================================================================================
+        #Rotacion y transformacion de la figura en el plano cartesiano
+        for i in vectors:
+            temp  = rotacionYR3(i[0],i[1],i[2],rotacionY)
+            temp2  = rotacionXR3(temp[0],temp[1],temp[2],rotacionX)
+            temp3 = transformacionR3_R2(temp2[0],temp2[1],temp2[2],ANCHO,ALTO,260,7- valorEscalamiento)
+            X = temp3[0]
+            Y = temp3[1]
+
+            ListaC.append([X,Y])
+        #================================================================================================
+        #CARAS
+        caras1 = [ListaC[0],ListaC[1],ListaC[2],ListaC[3],ListaC[4],ListaC[5],ListaC[6],ListaC[7]]
+        caras2 = [ListaC[0],ListaC[1],ListaC[8],ListaC[9]]
+        caras3 = [ListaC[4],ListaC[5],ListaC[10],ListaC[11]]
+        caras4 = [ListaC[1],ListaC[2],ListaC[12],ListaC[13]]
+        caras5 = [ListaC[2],ListaC[12],ListaC[14],ListaC[3]]
+        caras6 = [ListaC[5],ListaC[10],ListaC[15],ListaC[6]]
+        caras7 = [ListaC[3],ListaC[14],ListaC[11],ListaC[4]]
+
+        pygame.draw.polygon(pantalla,SALMON,caras1,1)
+        pygame.draw.polygon(pantalla,STEELBLUE,caras2,1)
+        pygame.draw.polygon(pantalla,CORAL,caras3,1)
+        pygame.draw.polygon(pantalla,SALMON,caras4,1)
+        pygame.draw.polygon(pantalla,PINK,caras5,1)
+        pygame.draw.polygon(pantalla,VIOLET,caras6,1)
+        pygame.draw.polygon(pantalla,MARINA,caras7,1)
+
+        #ejesxyz(pantalla,center)
+
+        ListaC.clear()
+
+        pygame.display.flip()
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#LIBRERIA
+
+import pygame, math
+
+ANCHO = 800
+ALTO = 600
+NARANJA = [255,128,0]
+BLANCO = [255,255,255]
+SALMON = [250,128,114]
+STEELBLUE = [70,130,180]
+PINK = [255,192,203]
+NEGRO = [0,0,0]
+CORAL = [255,127,80]
+VIOLET = [238,130,238]
+MARINA = [127,255,212]
+center = [ANCHO/2,ALTO/2]
+pantalla = [ANCHO,ALTO]
+
+
+
+
+#ROTACIONES EN R3
+
+def rotacionXR3(X,Y,Z, grados):
+    rad = math.radians(grados)
+    sintheta = math.sin(rad)
+    costheta = math.cos(rad)
+
+    yP = (Y * costheta) - (Z * sintheta)
+    zP = (Y * sintheta) + (Z * costheta)
+    return [(X), (yP), (zP)]
+
+
+def rotacionYR3(X,Y,Z, grados):
+    rad = math.radians(grados)
+    rad = math.radians(grados)
+    sintheta = math.sin(rad)
+    costheta = math.cos(rad)
+
+    zP = (Z * costheta) - (X * sintheta)
+    xP = (Z * sintheta) + (X * costheta)
+    return [xP,Y,zP]
+
+def rotacionZR3(X,Y,Z, grados):
+    rad = math.radians(grados)
+    rad = math.radians(grados)
+    sintheta = math.sin(rad)
+    costheta = math.cos(rad)
+
+    xP = (X * costheta) - (Y * sintheta)
+    yP = (X * sintheta) + (Y * costheta)
+    return [xP,yP,Z]
+
+#TransformacionR3_R2
+def transformacionR3_R2(X,Y,Z,ANCHO, ALTO, campVision, distancia):
+
+    xP =  X * campVision / (distancia + Z)+ ANCHO /2
+    yP = -Y * campVision / (distancia + Z)+ ALTO /2
+    return [xP, yP, 1]
+
+def ejesxyz(v,origen):
+    xO = origen[0]
+    yO = origen[1]
+    pygame.draw.line(v,STEELBLUE,[xO,0],[xO,yO],1)
+    pygame.draw.line(v,PINK,[xO,yO],[ANCHO,yO],1)
+    pygame.draw.line(v,BLANCO,[xO,yO],[0,ALTO],1)
+    pygame.display.flip()
